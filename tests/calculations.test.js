@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { calculateExpectedPrice, calculateGoldValue, convertCurrency, parseSmartInput, purityFromInput } from "../src/calculations.js";
+import { calculateExpectedPrice, calculateGoldValue, convertCurrency, parseSmartInput, purityFromInput } from "../public/src/calculations.js";
 
 test("karat and fineness convert to precise purity", () => {
   assert.equal(purityFromInput(22, "karat"), 22 / 24);

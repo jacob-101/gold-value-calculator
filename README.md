@@ -36,7 +36,12 @@ One troy ounce is converted using `31.1034768 grams`. API responses are validate
 
 ## Hosting
 
-The app is dependency-free static HTML, CSS and JavaScript. It can be deployed directly to Cloudflare Pages with no build command and `/` as the output directory.
+The app is dependency-free static HTML, CSS and JavaScript. The committed `wrangler.jsonc` deploys only the `public/` directory, keeping development files—including Wrangler's own `node_modules`—out of the static upload.
+
+For a Cloudflare Workers Git deployment, use:
+
+- Build command: none
+- Deploy command: `npx wrangler deploy`
 
 ## Disclaimer
 
