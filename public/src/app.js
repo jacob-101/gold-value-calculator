@@ -1,4 +1,4 @@
-import { CURRENCIES, calculateExpectedPrice, calculateGoldValue, calculateVendor, convertCurrency, parseSmartInput, purityFromInput } from "./calculations.js";
+import { CURRENCIES, calculateExpectedPrice, calculateGoldValue, calculateVendor, convertCurrency, purityFromInput } from "./calculations.js";
 import { fetchMarketData, marketDataFromManualRate, readCachedMarketData } from "./api.js";
 
 const $ = (selector) => document.querySelector(selector);
@@ -87,18 +87,6 @@ function selectKarat(value) {
   else $("#customPurity").focus();
 }
 
-function applySmartInput() {
-  const parsed = parseSmartInput($("#smartInput").value);
-  if (parsed.weight) { $("#weight").value = parsed.weight; state.weight = parsed.weight; }
-  if (parsed.purityInput) {
-    if (parsed.purityMode === "karat" && [24, 23, 22, 21, 20, 18, 14, 10, 9].includes(parsed.purityInput)) selectKarat(parsed.purityInput);
-    else { selectKarat("custom"); $("#customPurity").value = parsed.purityInput; state.purity = purityFromInput(parsed.purityInput, parsed.purityMode); state.purityLabel = parsed.purityMode === "karat" ? `${parsed.purityInput}K` : `${number(state.purity * 100, 1)}%`; }
-  }
-  if (parsed.vendorPrice) $("#vendorPrice").value = parsed.vendorPrice;
-  if (parsed.currency) $("#vendorCurrency").value = parsed.currency;
-  render();
-}
-
 async function refreshMarket() {
   const button = $("#refreshRates"); button.disabled = true; button.classList.add("loading");
   try { state.market = await fetchMarketData(); }
@@ -116,7 +104,6 @@ function bindEvents() {
   $("#customPurity").addEventListener("input", (event) => { state.purity = purityFromInput(event.target.value); const raw = Number(event.target.value); state.purityLabel = raw > 100 ? `${number(state.purity * 100, 1)}% fine` : raw > 24 ? `${number(state.purity * 100, 1)}%` : `${number(raw, 2)}K`; $("#purityHint").textContent = state.purity ? `${number(state.purity * 100, 2)}% pure · approx. ${number(state.purity * 24, 2)}K` : "Enter 916 for 91.6% fineness."; render(); });
   $$("[data-currency]").forEach((button) => button.addEventListener("click", () => { state.primaryCurrency = button.dataset.currency; $$("[data-currency]").forEach((b) => b.classList.toggle("active", b === button)); render(); }));
   ["vendorPrice", "vendorCurrency", "makingCharge", "makingType", "taxRate"].forEach((id) => $(`#${id}`).addEventListener("input", render));
-  $("#applySmart").addEventListener("click", applySmartInput); $("#smartInput").addEventListener("keydown", (event) => { if (event.key === "Enter") applySmartInput(); });
   $("#refreshRates").addEventListener("click", refreshMarket);
   $("#spotKarat").addEventListener("change", (event) => { state.spotKarat = Number(event.target.value); renderMarketStatus(); });
   $("#manualRateForm").addEventListener("submit", (event) => { event.preventDefault(); try { state.market = marketDataFromManualRate($("#manualRate").value, $("#manualCurrency").value, currentRates()); render(); } catch { $("#manualRate").setCustomValidity("Enter a valid positive price"); $("#manualRate").reportValidity(); } });

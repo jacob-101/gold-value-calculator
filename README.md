@@ -6,7 +6,6 @@ A fast, mobile-first calculator for the intrinsic value of gold jewellery, coins
 
 - Live 24K spot price per gram in SGD, INR and USD
 - Exact karat, percentage and fineness calculations
-- Smart input such as `10g 22k vendor 1650 sgd`
 - Vendor premium and price-per-gram breakdown
 - Optional making-charge and tax estimate
 - Cached last-known data and manual-rate fallback

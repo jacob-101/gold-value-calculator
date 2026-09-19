@@ -45,19 +45,3 @@ export function calculateExpectedPrice({ goldValue, makingCharge, makingType, ta
   const tax = subtotal * Math.max(Number(taxRate) || 0, 0) / 100;
   return { charge, tax, total: subtotal + tax };
 }
-
-export function parseSmartInput(input) {
-  const text = String(input).trim().toLowerCase();
-  const weightMatch = text.match(/(\d+(?:\.\d+)?)\s*g\b/);
-  const karatMatch = text.match(/(\d+(?:\.\d+)?)\s*k\b/);
-  const finenessMatch = !karatMatch ? text.match(/\b(\d{3})(?:\s*(?:fine|fineness))?\b/) : null;
-  const vendorMatch = text.match(/(?:vendor|price|quoted?)\s*[:=]?\s*(\d+(?:[,.]\d+)?)/);
-  const currencyMatch = text.match(/\b(sgd|inr|usd)\b/);
-  return {
-    weight: weightMatch ? Number(weightMatch[1]) : null,
-    purityInput: karatMatch ? Number(karatMatch[1]) : finenessMatch ? Number(finenessMatch[1]) : null,
-    purityMode: karatMatch ? "karat" : finenessMatch ? "fineness" : null,
-    vendorPrice: vendorMatch ? Number(vendorMatch[1].replace(",", "")) : null,
-    currency: currencyMatch ? currencyMatch[1].toUpperCase() : null,
-  };
-}
