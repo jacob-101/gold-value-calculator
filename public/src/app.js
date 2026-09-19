@@ -105,7 +105,15 @@ function bindEvents() {
   $$("[data-currency]").forEach((button) => button.addEventListener("click", () => { state.primaryCurrency = button.dataset.currency; $$("[data-currency]").forEach((b) => b.classList.toggle("active", b === button)); render(); }));
   ["vendorPrice", "vendorCurrency", "makingCharge", "makingType", "taxRate"].forEach((id) => $(`#${id}`).addEventListener("input", render));
   $("#refreshRates").addEventListener("click", refreshMarket);
-  $("#spotKarat").addEventListener("change", (event) => { state.spotKarat = Number(event.target.value); renderMarketStatus(); });
+  $$('[data-spot-karat]').forEach((button) => button.addEventListener("click", () => {
+    state.spotKarat = Number(button.dataset.spotKarat);
+    $$('[data-spot-karat]').forEach((option) => {
+      const selected = option === button;
+      option.classList.toggle("active", selected);
+      option.setAttribute("aria-pressed", String(selected));
+    });
+    renderMarketStatus();
+  }));
   $("#manualRateForm").addEventListener("submit", (event) => { event.preventDefault(); try { state.market = marketDataFromManualRate($("#manualRate").value, $("#manualCurrency").value, currentRates()); render(); } catch { $("#manualRate").setCustomValidity("Enter a valid positive price"); $("#manualRate").reportValidity(); } });
   $("#themeToggle").addEventListener("click", () => { const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark"; document.documentElement.dataset.theme = next; localStorage.setItem("aurum-theme", next); });
 }

@@ -33,12 +33,14 @@
             <h1 id="live-title">Live Gold Price</h1>
           </div>
           <div class="ticker-controls">
-            <label class="spot-karat-control" for="spotKarat">
+            <div class="spot-karat-control" role="group" aria-label="Gold price purity">
               <span>Price purity</span>
-              <select id="spotKarat" aria-label="Gold price karat">
-                <option value="24">24K</option><option value="23">23K</option><option value="22">22K</option><option value="21">21K</option><option value="20">20K</option><option value="18">18K</option><option value="14">14K</option><option value="10">10K</option><option value="9">9K</option>
-              </select>
-            </label>
+              <div class="spot-karat-options">
+                <button class="active" type="button" data-spot-karat="24" aria-pressed="true">24K</button>
+                <button type="button" data-spot-karat="22" aria-pressed="false">22K</button>
+                <button type="button" data-spot-karat="18" aria-pressed="false">18K</button>
+              </div>
+            </div>
             <button class="refresh-button" id="refreshRates" type="button">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.34 5.66M20 4v7h-7"/></svg>
               Refresh
@@ -148,6 +150,6 @@
     </main>
 
     <footer><span>Aurum calculator</span><p>Spot and FX rates are informational. Confirm the final price with your jeweller.</p></footer>
-    <script type="module" src="./src/app.js"></script>
+    <script type="module" src="./src/app.js?v=20260919-2"></script>
   </body>
 </html>
