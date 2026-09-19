@@ -30,15 +30,23 @@
             <p class="eyebrow"><span class="pulse"></span><span id="rateStatus">Connecting to market</span></p>
             <h1 id="live-title">Live Gold Price</h1>
           </div>
-          <button class="refresh-button" id="refreshRates" type="button">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.34 5.66M20 4v7h-7"/></svg>
-            Refresh
-          </button>
+          <div class="ticker-controls">
+            <label class="spot-karat-control" for="spotKarat">
+              <span>Price purity</span>
+              <select id="spotKarat" aria-label="Gold price karat">
+                <option value="24">24K</option><option value="23">23K</option><option value="22">22K</option><option value="21">21K</option><option value="20">20K</option><option value="18">18K</option><option value="14">14K</option><option value="10">10K</option><option value="9">9K</option>
+              </select>
+            </label>
+            <button class="refresh-button" id="refreshRates" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.34 5.66M20 4v7h-7"/></svg>
+              Refresh
+            </button>
+          </div>
         </div>
         <div class="ticker-grid">
-          <div><span>24K / gram</span><strong id="spotSgd">—</strong><small>SGD</small></div>
-          <div><span>24K / gram</span><strong id="spotInr">—</strong><small>INR</small></div>
-          <div><span>24K / gram</span><strong id="spotUsd">—</strong><small>USD</small></div>
+          <div><span class="spot-purity-label">24K / gram</span><strong id="spotSgd">—</strong><small>SGD</small></div>
+          <div><span class="spot-purity-label">24K / gram</span><strong id="spotInr">—</strong><small>INR</small></div>
+          <div><span class="spot-purity-label">24K / gram</span><strong id="spotUsd">—</strong><small>USD</small></div>
         </div>
         <div class="ticker-foot">
           <span id="lastUpdated">Last updated: —</span>

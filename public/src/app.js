@@ -9,6 +9,7 @@ const state = {
   weight: 10,
   purity: 22 / 24,
   purityLabel: "22K",
+  spotKarat: 24,
   primaryCurrency: "SGD",
   market: readCachedMarketData(),
 };
@@ -34,8 +35,10 @@ function renderMarketStatus() {
   $(".pulse").classList.toggle("offline", !live);
   $("#rateSource").textContent = live ? `Gold API · FX ${market.fxDate || "latest"}` : cached ? "Cached — tap refresh for live price" : market ? "Manual 24K rate in use" : "Enter a manual rate below";
   $("#manualRateForm").classList.toggle("hidden", Boolean(market));
+  const displayedPurity = purityFromInput(state.spotKarat, "karat");
+  $$(".spot-purity-label").forEach((label) => { label.textContent = `${state.spotKarat}K / gram`; });
   CURRENCIES.forEach((currency) => {
-    $(`#spot${currency[0]}${currency.slice(1).toLowerCase()}`).textContent = market ? money(spot(currency), currency, true) : "—";
+    $(`#spot${currency[0]}${currency.slice(1).toLowerCase()}`).textContent = market ? money(spot(currency) * displayedPurity, currency, true) : "—";
   });
   $("#lastUpdated").textContent = market ? `Last updated: ${new Date(market.timestamp).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}` : "Last updated: —";
 }
@@ -115,6 +118,7 @@ function bindEvents() {
   ["vendorPrice", "vendorCurrency", "makingCharge", "makingType", "taxRate"].forEach((id) => $(`#${id}`).addEventListener("input", render));
   $("#applySmart").addEventListener("click", applySmartInput); $("#smartInput").addEventListener("keydown", (event) => { if (event.key === "Enter") applySmartInput(); });
   $("#refreshRates").addEventListener("click", refreshMarket);
+  $("#spotKarat").addEventListener("change", (event) => { state.spotKarat = Number(event.target.value); renderMarketStatus(); });
   $("#manualRateForm").addEventListener("submit", (event) => { event.preventDefault(); try { state.market = marketDataFromManualRate($("#manualRate").value, $("#manualCurrency").value, currentRates()); render(); } catch { $("#manualRate").setCustomValidity("Enter a valid positive price"); $("#manualRate").reportValidity(); } });
   $("#themeToggle").addEventListener("click", () => { const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark"; document.documentElement.dataset.theme = next; localStorage.setItem("aurum-theme", next); });
 }
