@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { calculateExpectedPrice, calculateGoldValue, convertCurrency, normalizeOffer, parseSmartInput, purityFromInput } from "../src/calculations.js";
+import { calculateExpectedPrice, calculateGoldValue, convertCurrency, parseSmartInput, purityFromInput } from "../src/calculations.js";
 
 test("karat and fineness convert to precise purity", () => {
   assert.equal(purityFromInput(22, "karat"), 22 / 24);
@@ -25,10 +25,4 @@ test("smart input parses weight, fineness and vendor", () => {
 
 test("making charge and tax remain explicit", () => {
   assert.deepEqual(calculateExpectedPrice({ goldValue: 1000, makingCharge: 10, makingType: "percent", taxRate: 9 }), { charge: 100, tax: 99, total: 1199 });
-});
-
-test("offers are normalized to a shared currency", () => {
-  const result = normalizeOffer({ weight: 10, purity: 22 / 24, vendorPrice: 1500, currency: "SGD" }, 100, { USD: 1, SGD: 1.25, INR: 87.5 }, "INR");
-  assert.equal(result.vendor, 105000);
-  assert.ok(result.premium > 30 && result.premium < 31);
 });

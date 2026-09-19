@@ -9,7 +9,6 @@ A fast, mobile-first calculator for the intrinsic value of gold jewellery, coins
 - Smart input such as `10g 22k vendor 1650 sgd`
 - Vendor premium and price-per-gram breakdown
 - Optional making-charge and tax estimate
-- Two-offer comparison normalized for weight, purity and currency
 - Cached last-known data and manual-rate fallback
 - Responsive light and dark themes
 

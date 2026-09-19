@@ -61,11 +61,3 @@ export function parseSmartInput(input) {
     currency: currencyMatch ? currencyMatch[1].toUpperCase() : null,
   };
 }
-
-export function normalizeOffer({ weight, purity, vendorPrice, currency }, spotUsd, usdRates, targetCurrency) {
-  const intrinsicUsd = calculateGoldValue({ weight, purity, spotPerGram: spotUsd }).value;
-  const vendorTarget = convertCurrency(vendorPrice, currency, targetCurrency, usdRates);
-  const intrinsicTarget = convertCurrency(intrinsicUsd, "USD", targetCurrency, usdRates);
-  const metrics = calculateVendor({ vendorPrice: vendorTarget, intrinsicValue: intrinsicTarget, weight });
-  return { intrinsic: intrinsicTarget, vendor: vendorTarget, ...metrics };
-}

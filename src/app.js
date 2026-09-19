@@ -1,4 +1,4 @@
-import { CURRENCIES, calculateExpectedPrice, calculateGoldValue, calculateVendor, convertCurrency, normalizeOffer, parseSmartInput, purityFromInput } from "./calculations.js";
+import { CURRENCIES, calculateExpectedPrice, calculateGoldValue, calculateVendor, convertCurrency, parseSmartInput, purityFromInput } from "./calculations.js";
 import { fetchMarketData, marketDataFromManualRate, readCachedMarketData } from "./api.js";
 
 const $ = (selector) => document.querySelector(selector);
@@ -53,7 +53,6 @@ function render() {
   $("#primarySpot").textContent = state.market ? money(spot(state.primaryCurrency), state.primaryCurrency) : "—";
   renderVendor(result.value);
   renderReceipt(primaryValue);
-  renderComparison();
 }
 
 function renderVendor(intrinsicUsd) {
@@ -75,20 +74,6 @@ function renderReceipt(goldValue) {
   $("#receiptMaking").textContent = money(expected.charge, currency);
   $("#receiptTax").textContent = money(expected.tax, currency);
   $("#receiptTotal").textContent = state.market ? money(expected.total, currency) : "—";
-}
-
-function readOffer(prefix) {
-  return { weight: Number($(`#offer${prefix}Weight`).value), purity: purityFromInput($(`#offer${prefix}Karat`).value, "karat"), vendorPrice: Number($(`#offer${prefix}Price`).value), currency: $(`#offer${prefix}Currency`).value };
-}
-
-function renderComparison() {
-  const a = readOffer("A"); const b = readOffer("B");
-  if (!state.market || !a.vendorPrice || !b.vendorPrice) { $("#comparisonResult").innerHTML = "<p>Enter both vendor prices to compare their normalized premiums.</p>"; return; }
-  const target = state.primaryCurrency;
-  const first = normalizeOffer(a, state.market.spotUsdPerGram, currentRates(), target);
-  const second = normalizeOffer(b, state.market.spotUsdPerGram, currentRates(), target);
-  const cheaper = first.premium === second.premium ? "Both offers carry the same premium." : `${first.premium < second.premium ? "Offer A" : "Offer B"} is the better value by ${number(Math.abs(first.premium - second.premium), 1)} premium points.`;
-  $("#comparisonResult").innerHTML = `<div class="compare-callout"><span>Better normalized offer</span><strong>${cheaper}</strong></div><div class="compare-columns"><div><b>Offer A</b><span>Gold value ${money(first.intrinsic, target)}</span><span>Vendor ${money(first.vendor, target)}</span><span>Premium ${number(first.premium, 1)}%</span><span>${money(first.pricePerGram, target)} / g</span></div><div><b>Offer B</b><span>Gold value ${money(second.intrinsic, target)}</span><span>Vendor ${money(second.vendor, target)}</span><span>Premium ${number(second.premium, 1)}%</span><span>${money(second.pricePerGram, target)} / g</span></div></div>`;
 }
 
 function selectKarat(value) {
@@ -127,11 +112,10 @@ function bindEvents() {
   $$("[data-karat]").forEach((button) => button.addEventListener("click", () => selectKarat(button.dataset.karat)));
   $("#customPurity").addEventListener("input", (event) => { state.purity = purityFromInput(event.target.value); const raw = Number(event.target.value); state.purityLabel = raw > 100 ? `${number(state.purity * 100, 1)}% fine` : raw > 24 ? `${number(state.purity * 100, 1)}%` : `${number(raw, 2)}K`; $("#purityHint").textContent = state.purity ? `${number(state.purity * 100, 2)}% pure · approx. ${number(state.purity * 24, 2)}K` : "Enter 916 for 91.6% fineness."; render(); });
   $$("[data-currency]").forEach((button) => button.addEventListener("click", () => { state.primaryCurrency = button.dataset.currency; $$("[data-currency]").forEach((b) => b.classList.toggle("active", b === button)); render(); }));
-  ["vendorPrice", "vendorCurrency", "makingCharge", "makingType", "taxRate", "offerAWeight", "offerAKarat", "offerAPrice", "offerACurrency", "offerBWeight", "offerBKarat", "offerBPrice", "offerBCurrency"].forEach((id) => $(`#${id}`).addEventListener("input", render));
+  ["vendorPrice", "vendorCurrency", "makingCharge", "makingType", "taxRate"].forEach((id) => $(`#${id}`).addEventListener("input", render));
   $("#applySmart").addEventListener("click", applySmartInput); $("#smartInput").addEventListener("keydown", (event) => { if (event.key === "Enter") applySmartInput(); });
   $("#refreshRates").addEventListener("click", refreshMarket);
   $("#manualRateForm").addEventListener("submit", (event) => { event.preventDefault(); try { state.market = marketDataFromManualRate($("#manualRate").value, $("#manualCurrency").value, currentRates()); render(); } catch { $("#manualRate").setCustomValidity("Enter a valid positive price"); $("#manualRate").reportValidity(); } });
-  $("#copyMainToCompare").addEventListener("click", () => { ["A", "B"].forEach((prefix) => { $(`#offer${prefix}Weight`).value = state.weight; $(`#offer${prefix}Karat`).value = number(state.purity * 24, 2); }); render(); });
   $("#themeToggle").addEventListener("click", () => { const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark"; document.documentElement.dataset.theme = next; localStorage.setItem("aurum-theme", next); });
 }
 
