@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f4efe4" />
+    <meta name="description" content="Calculate the intrinsic value of gold from live spot prices in SGD, INR and USD." />
+    <title>Aurum — Gold Value Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Aurum home">
+        <span class="brand-mark">Au</span>
+        <span><strong>Aurum</strong><small>Know the metal. Not the markup.</small></span>
+      </a>
+      <button class="icon-button" id="themeToggle" type="button" aria-label="Switch colour theme" title="Switch colour theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c0-.5-.04-1-.12-1.47A7 7 0 0 1 13.47 3.1 9 9 0 0 0 12 3Z"/></svg>
+      </button>
+    </header>
+
+    <main id="top">
+      <section class="ticker" aria-labelledby="live-title">
+        <div class="ticker-heading">
+          <div>
+            <p class="eyebrow"><span class="pulse"></span><span id="rateStatus">Connecting to market</span></p>
+            <h1 id="live-title">Live Gold Price</h1>
+          </div>
+          <button class="refresh-button" id="refreshRates" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.34 5.66M20 4v7h-7"/></svg>
+            Refresh
+          </button>
+        </div>
+        <div class="ticker-grid">
+          <div><span>24K / gram</span><strong id="spotSgd">—</strong><small>SGD</small></div>
+          <div><span>24K / gram</span><strong id="spotInr">—</strong><small>INR</small></div>
+          <div><span>24K / gram</span><strong id="spotUsd">—</strong><small>USD</small></div>
+        </div>
+        <div class="ticker-foot">
+          <span id="lastUpdated">Last updated: —</span>
+          <span id="rateSource">Gold spot + central-bank FX</span>
+        </div>
+        <form class="manual-rate hidden" id="manualRateForm">
+          <p>Live price unavailable. Enter a 24K price per gram to keep calculating.</p>
+          <div class="inline-fields">
+            <label><span>Price / gram</span><input id="manualRate" type="number" inputmode="decimal" min="0" step="0.01" placeholder="e.g. 145.50" required /></label>
+            <label><span>Currency</span><select id="manualCurrency"><option>SGD</option><option>INR</option><option>USD</option></select></label>
+            <button type="submit">Use rate</button>
+          </div>
+        </form>
+      </section>
+
+      <div class="app-grid">
+        <section class="calculator-card card" aria-labelledby="calculator-title">
+          <div class="section-number">01</div>
+          <div class="section-head">
+            <div><p class="eyebrow">Your gold</p><h2 id="calculator-title">Calculate its worth</h2></div>
+            <div class="currency-switch" aria-label="Primary currency">
+              <button type="button" data-currency="SGD" class="active" aria-label="Singapore dollars">S$</button>
+              <button type="button" data-currency="INR" aria-label="Indian rupees">₹</button>
+              <button type="button" data-currency="USD" aria-label="US dollars">$</button>
+            </div>
+          </div>
+
+          <label class="smart-label" for="smartInput">Quick entry <span>Try “10g 22k vendor 1650 sgd”</span></label>
+          <div class="smart-input-wrap">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 1.2 3.1L19 8.5l-2.8 1.4L15 13l-1.2-3.1L11 8.5l2.8-1.4L15 4ZM6.5 12l1.1 2.4L10 15.5l-2.4 1.1L6.5 19l-1.1-2.4L3 15.5l2.4-1.1L6.5 12Z"/></svg>
+            <input id="smartInput" type="text" autocomplete="off" placeholder="12.5g 18k" />
+            <button id="applySmart" type="button">Apply</button>
+          </div>
+
+          <div class="field-block">
+            <label for="weight">Weight</label>
+            <div class="hero-input"><input id="weight" type="number" inputmode="decimal" min="0" step="any" value="10" /><span>grams</span></div>
+            <div class="quick-row" aria-label="Quick weights">
+              <button type="button" data-weight="1">1g</button><button type="button" data-weight="5">5g</button><button type="button" data-weight="8">8g</button><button type="button" data-weight="10" class="active">10g</button><button type="button" data-weight="20">20g</button><button type="button" data-weight="50">50g</button><button type="button" data-weight="100">100g</button>
+            </div>
+          </div>
+
+          <fieldset class="field-block">
+            <legend>Gold purity</legend>
+            <div class="karat-grid" id="karatGrid">
+              <button type="button" data-karat="24">24K</button><button type="button" data-karat="23">23K</button><button type="button" data-karat="22" class="active">22K</button><button type="button" data-karat="21">21K</button><button type="button" data-karat="20">20K</button><button type="button" data-karat="18">18K</button><button type="button" data-karat="14">14K</button><button type="button" data-karat="10">10K</button><button type="button" data-karat="9">9K</button><button type="button" data-karat="custom">Custom</button>
+            </div>
+            <div class="custom-purity hidden" id="customPurityWrap">
+              <label for="customPurity">Karat, purity %, or fineness</label>
+              <input id="customPurity" type="number" inputmode="decimal" min="0" max="1000" step="any" placeholder="e.g. 916, 75%, or 18K" />
+              <small id="purityHint">Enter 916 for 91.6% fineness.</small>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="result-card" aria-live="polite">
+          <div class="result-topline"><span>Current gold value</span><span id="resultDescriptor">10 g · 22K</span></div>
+          <div class="result-core">
+            <p>Intrinsic metal value</p>
+            <strong id="primaryValue">—</strong>
+            <div class="equivalents"><span id="sgdEquivalent">S$ —</span><i></i><span id="inrEquivalent">₹ —</span></div>
+          </div>
+          <div class="result-stats">
+            <div><span>Pure gold content</span><strong id="pureWeight">9.167 g</strong></div>
+            <div><span>Selected gold / g</span><strong id="karatPrice">—</strong></div>
+            <div><span>24K spot / g</span><strong id="primarySpot">—</strong></div>
+          </div>
+          <p class="result-note">Based on raw gold content only. Retail price may include making charges, tax and dealer premium.</p>
+        </section>
+      </div>
+
+      <section class="details card" aria-labelledby="extras-title">
+        <div class="section-number">02</div>
+        <div class="section-head"><div><p class="eyebrow">Optional</p><h2 id="extras-title">Understand the markup</h2></div></div>
+        <div class="expand-grid">
+          <details open>
+            <summary><span><b>Shop / vendor price</b><small>See how much extra you are paying</small></span><i>+</i></summary>
+            <div class="details-body">
+              <div class="two-fields">
+                <label><span>Quoted price</span><input id="vendorPrice" type="number" inputmode="decimal" min="0" step="any" placeholder="0.00" /></label>
+                <label><span>Currency</span><select id="vendorCurrency"><option>SGD</option><option>INR</option><option>USD</option></select></label>
+              </div>
+              <div class="breakdown" id="vendorBreakdown">
+                <div><span>Gold value</span><strong id="vendorGoldValue">—</strong></div><div><span>Vendor price</span><strong id="vendorQuoted">—</strong></div><div><span>Extra paid</span><strong id="vendorExtra">—</strong></div><div class="accent"><span>Premium</span><strong id="vendorPremium">—</strong></div><div><span>Vendor price / g</span><strong id="vendorPerGram">—</strong></div>
+              </div>
+            </div>
+          </details>
+          <details>
+            <summary><span><b>Making charge & tax</b><small>Estimate a final shop price</small></span><i>+</i></summary>
+            <div class="details-body">
+              <div class="three-fields">
+                <label><span>Making charge</span><input id="makingCharge" type="number" inputmode="decimal" min="0" step="any" placeholder="0" /></label>
+                <label><span>Type</span><select id="makingType"><option value="fixed">Fixed</option><option value="percent">Percentage</option></select></label>
+                <label><span>Tax / GST %</span><input id="taxRate" type="number" inputmode="decimal" min="0" step="any" placeholder="Optional" /></label>
+              </div>
+              <div class="receipt">
+                <div><span>Gold value</span><strong id="receiptGold">—</strong></div><div><span>+ Making charge</span><strong id="receiptMaking">—</strong></div><div><span>+ Tax / GST</span><strong id="receiptTax">—</strong></div><div class="total"><span>Expected final price</span><strong id="receiptTotal">—</strong></div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="compare card" aria-labelledby="compare-title">
+        <div class="section-number">03</div>
+        <div class="section-head"><div><p class="eyebrow">Quick compare</p><h2 id="compare-title">Two offers, one fair measure</h2></div><button class="text-button" id="copyMainToCompare" type="button">Use current gold</button></div>
+        <div class="offers">
+          <article class="offer" data-offer="a">
+            <div class="offer-title"><span>Offer A</span><select id="offerACurrency"><option value="SGD">Singapore · SGD</option><option value="INR">India · INR</option><option value="USD">United States · USD</option></select></div>
+            <div class="offer-inputs"><label><span>Weight (g)</span><input id="offerAWeight" type="number" inputmode="decimal" min="0" value="10" /></label><label><span>Karat</span><input id="offerAKarat" type="number" inputmode="decimal" min="0" max="24" value="22" /></label><label><span>Vendor price</span><input id="offerAPrice" type="number" inputmode="decimal" min="0" placeholder="1650" /></label></div>
+          </article>
+          <div class="versus">VS</div>
+          <article class="offer" data-offer="b">
+            <div class="offer-title"><span>Offer B</span><select id="offerBCurrency"><option value="INR">India · INR</option><option value="SGD">Singapore · SGD</option><option value="USD">United States · USD</option></select></div>
+            <div class="offer-inputs"><label><span>Weight (g)</span><input id="offerBWeight" type="number" inputmode="decimal" min="0" value="10" /></label><label><span>Karat</span><input id="offerBKarat" type="number" inputmode="decimal" min="0" max="24" value="22" /></label><label><span>Vendor price</span><input id="offerBPrice" type="number" inputmode="decimal" min="0" placeholder="105000" /></label></div>
+          </article>
+        </div>
+        <div class="comparison-result" id="comparisonResult"><p>Enter both vendor prices to compare their normalized premiums.</p></div>
+      </section>
+    </main>
+
+    <footer><span>Aurum calculator</span><p>Spot and FX rates are informational. Confirm the final price with your jeweller.</p></footer>
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>

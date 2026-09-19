@@ -1,0 +1,12 @@
+{
+  "name": "gold-value-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A fast, mobile-first intrinsic gold value calculator for SGD, INR and USD.",
+  "scripts": {
+    "dev": "python3 -m http.server 4173",
+    "test": "node --test",
+    "check": "node --check src/app.js && node --check src/api.js && node --check src/calculations.js"
+  }
+}
